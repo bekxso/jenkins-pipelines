@@ -10,9 +10,9 @@ properties([
 
 
 
-stage("Stage1"){ 
+stage("Pull Repo"){ 
 
-echo "hello" 
+git 'https://github.com/farrukh90/cool_website.git' 
 
 } 
 

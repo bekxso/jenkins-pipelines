@@ -11,7 +11,7 @@ node {
 			'stage1.otabeksobirov.com.com', 
 			'prod1.otabeksobirov.com.com'], 
 			description: 'dev1.otabeksobirov.com', 
-			name: 'ENVIR')]), 
+			name: '54.224.50.100')]), 
 		])
 
 		// Pulls a repo from developer
@@ -21,17 +21,17 @@ node {
 		//Installs web server on different environment
 	stage("Install Prerequisites"){
 		sh """
-		ssh centos@${ENVIR}                 sudo yum install httpd -y
+		ssh centos@${54.224.50.100}                 sudo yum install httpd -y
 		"""
 	}
 		//Copies over developers files to different environment
 	stage("Copy artifacts"){
 		sh """
 		scp -r *  centos@${ENVIR}:/tmp
-		ssh centos@${ENVIR}                 sudo cp -r /tmp/index.html /var/www/html/
-		ssh centos@${ENVIR}                 sudo cp -r /tmp/style.css /var/www/html/
-		ssh centos@${ENVIR}				    sudo chown centos:centos /var/www/html/
-		ssh centos@${ENVIR}				    sudo chmod 777 /var/www/html/*
+		ssh centos@${54.224.50.100}                 sudo cp -r /tmp/index.html /var/www/html/
+		ssh centos@${54.224.50.100}                 sudo cp -r /tmp/style.css /var/www/html/
+		ssh centos@${54.224.50.100}				    sudo chown centos:centos /var/www/html/
+		ssh centos@${54.224.50.100}				    sudo chmod 777 /var/www/html/*
 		"""
 	}
 		//Restarts web server

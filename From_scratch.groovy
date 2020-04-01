@@ -10,7 +10,7 @@ node {
 			'qa1.otabeksobirov.com', 
 			'stage1.otabeksobirov.com', 
 			'prod1.otabeksobirov.com'], 
-			description: 'Please choose an environment', 
+			description: 'dev1.otabeksobirov.com', 
 			name: 'ENVIR')]), 
 		])
 

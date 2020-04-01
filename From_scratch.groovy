@@ -1,47 +1,46 @@
-node { 
-properties([
-    // Below line sets "discard Builds more than 5"
-    buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')), 
-    
-    
-    // Below line triggers this job every minute
-    pipelineTriggers([pollSCM('* * * * *')])
-        ])
+node {
+	properties([
+		// Below line sets "Discard Builds more than 5"
+		buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '5')), 
+		
+		// Below line triggers this job every minute
+		pipelineTriggers([pollSCM('* * * * *')]),
+		parameters([choice(choices: [
+			'dev1.otabeksobirov.com', 
+			'qa1.otabeksobirov.com', 
+			'stage1.otabeksobirov.com', 
+			'prod1.otabeksobirov.com'], 
+			description: 'Please choose an environment', 
+			name: 'ENVIR')]), 
+		])
 
+		// Pulls a repo from developer
+	stage("Pull Repo"){
+		git   'https://github.com/farrukh90/cool_website.git'
+	}
+		//Installs web server on different environment
+	stage("Install Prerequisites"){
+		sh """
+		ssh centos@${ENVIR}                 sudo yum install httpd -y
+		"""
+	}
+		//Copies over developers files to different environment
+	stage("Copy artifacts"){
+		sh """
+		scp -r *  centos@${ENVIR}:/tmp
+		ssh centos@${ENVIR}                 sudo cp -r /tmp/index.html /var/www/html/
+		ssh centos@${ENVIR}                 sudo cp -r /tmp/style.css /var/www/html/
+		ssh centos@${ENVIR}				    sudo chown centos:centos /var/www/html/
+		ssh centos@${ENVIR}				    sudo chmod 777 /var/www/html/*
+		"""
+	}
+		//Restarts web server
+	stage("Restart web server"){
+		sh "ssh centos@${ENVIR}               sudo systemctl restart httpd"
+	}
 
-
-stage("Pull Repo"){ 
-
-git 'https://github.com/farrukh90/cool_website.git' 
-
-} 
-
-stage("Install Prerequisites"){ 
-
-sh """
-sudo yum install httpd -y
-sudo cp -r * /var/www/html/
-sudo systemctl start httpd
-"""
-
-} 
-
-stage("Stage3"){ 
-
-echo "hello" 
-
-} 
-
-stage("Stage4"){ 
-
-echo "hello" 
-
-} 
-
-stage("Stage5"){ 
-
-echo "hello" 
-
-} 
-
-} 
+		//Sends a message to slack
+	stage("Slack"){
+		slackSend color: '#BADA55', message: 'Hello, World!'
+	}
+}

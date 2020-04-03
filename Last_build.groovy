@@ -8,7 +8,7 @@ properties([
         // Execute every minute
         cron('* * * * *')])
         ])
-    ])
+        
 
 stage("Stage1"){ 
 

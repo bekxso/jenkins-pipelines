@@ -81,10 +81,10 @@ node {
 					try {
 						sh '''
 							#!/bin/bash
-							IMAGES=$(ssh centos@dev1.otabeksobirov.com docker ps -aq) 
+							IMAGES=$(ssh centos@d${ENVIR} docker ps -aq) 
 							for i in \$IMAGES; do
-								ssh centos@dev1.otabeksobirov.com docker stop \$i
-								ssh centos@dev1.otabeksobirov.com docker rm \$i
+								ssh centos@d${ENVIR} docker stop \$i
+								ssh centos@d${ENVIR} docker rm \$i
 							done 
 							'''
 					} catch(e) {
@@ -98,7 +98,7 @@ node {
 		timestamps {
 			ws {
 				sh '''
-					ssh centos@dev1.otabeksobirov.com docker run -dti -p 5001:5000 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis:${Version}
+					ssh centos@${ENVIR} docker run -dti -p 5001:5000 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis:${Version}
 					'''
             }
         }

@@ -1,15 +1,7 @@
-def dev1 = "dev1.otabeksobirov.com"
-def qa1  = "qa1.otabeksobirov.com"
-def stage1 = "stage1.otabeksobirov.com"
-def prod1 = "prod1.otabeksobirov.com"
-
-
-
 node {
-	
 	properties(
-		[parameters([
-            choice(choices: 
+		[parameters(
+			[choice(choices: 
 				[
 				'0.1', 
 				'0.2', 
@@ -23,23 +15,7 @@ node {
 				'10',
 			], 
 		description: 'Which version of the app should I deploy? ', 
-		name: 'Version'), 
-	choice(choices: 
-	[
-		'${stage1}', 
-		'${dev1}', 
-		'${qa1}', 
-		'${prod1}'
-		], 
-	description: 'Please provide an environment to build the application', 
-	name: 'ENVIR')])])
-
-
-
-
-
-
-
+		name: 'Version')])])
 		stage("Stage1"){
 			timestamps {
 				ws {
@@ -50,8 +26,8 @@ node {
 		timestamps {
 			ws{
 				sh '''
-aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis
-'''
+					aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis
+					'''
 				}
 			}
 		}
@@ -68,8 +44,8 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 			timestamps {
 				ws {
 					sh '''
-                        docker tag artemis:${Version} 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis:${Version}
-                        '''
+						docker tag artemis:${Version} 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis:${Version}
+					'''
 					}
 				}
 			}
@@ -94,7 +70,7 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 			timestamps {
 				ws {
 					sh '''
-						ssh centos@${ENVIR} $(aws ecr get-login --no-include-email --region us-east-1)
+						ssh centos@dev1.otabeksobirov.com $(aws ecr get-login --no-include-email --region us-east-1)
 						'''
 				}
 			}
@@ -105,10 +81,10 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 					try {
 						sh '''
 							#!/bin/bash
-							IMAGES=$(ssh centos@${ENVIR} docker ps -aq) 
+							IMAGES=$(ssh centos@dev1.otabeksobirov.com docker ps -aq) 
 							for i in \$IMAGES; do
-								ssh centos@${ENVIR} docker stop \$i
-								ssh centos@${ENVIR} docker rm \$i
+								ssh centos@dev1.otabeksobirov.com docker stop \$i
+								ssh centos@dev1.otabeksobirov.com docker rm \$i
 							done 
 							'''
 					} catch(e) {
@@ -122,9 +98,9 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 		timestamps {
 			ws {
 				sh '''
-					ssh centos@${ENVIR} docker run -dti -p 5001:5000 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis:${Version}
+					ssh centos@dev1.otabeksobirov.com docker run -dti -p 5001:5000 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis:${Version}
 					'''
-				}
-			}
-		}
+            }
+        }
+    }
 }

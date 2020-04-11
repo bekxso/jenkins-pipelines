@@ -6,25 +6,32 @@ node {
 		// Below line triggers this job every minute
 		pipelineTriggers([pollSCM('* * * * *')]),
 		parameters([
-
-			// Asks for Enviroment to Build
+			// Asks for Environment to Build
 			choice(choices: [
 			'dev1.otabeksobirov.com', 
 			'qa1.otabeksobirov.com', 
 			'stage1.otabeksobirov.com', 
 			'prod1.otabeksobirov.com'], 
 			description: 'Please choose an environment', 
-			name: 'ENVIR'), 
+			name: 'ENVIR'),
 
-			// Ask for version
+			// Asks for version
 			choice(choices: [
-				'v0.1',
-				'v0.2',
-				'v0.3',
-				'v0.4',
-				'v0.5'], 
+				'v0.1', 
+				'v0.2', 
+				'v0.3', 
+				'v0.4', 
+				'v0.5'
+				], 
 			description: 'Which version should we deploy?', 
-			name: 'Version')
+			name: 'Version'),
+
+
+			// Asks for an input
+			string(defaultValue: 'v1', 
+			description: 'Please enter version number', 
+			name: 'APP_VERSION', 
+			trim: true)
 			])
 		])
 
@@ -50,13 +57,15 @@ node {
 	}
 		//Restarts web server
 	stage("Restart web server"){
-		sh "ssh centos@${ENVIR}               sudo systemctl restart httpd"
+		ws("tmp/") {
+			sh "ssh centos@${ENVIR}               sudo systemctl restart httpd"
+		}
 	}
 
 		//Sends a message to slack
 	stage("Slack"){
-		slackSend color: '#BADA55', message: 'Hello, World!'
+		ws("mnt/"){
+			slackSend color: '#BADA55', message: 'Hello, World!'
+		}
 	}
 }
-
-

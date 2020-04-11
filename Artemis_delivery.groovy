@@ -94,7 +94,7 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 			timestamps {
 				ws {
 					sh '''
-						ssh centos@${ENVIR} $(aws ecr get-login --no-include-email --region us-east-1)
+						ssh centos@dev1.otabeksobirov.com $(aws ecr get-login --no-include-email --region us-east-1)
 						'''
 				}
 			}
@@ -105,10 +105,10 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 					try {
 						sh '''
 							#!/bin/bash
-							IMAGES=$(ssh centos@${ENVIR} docker ps -aq) 
+							IMAGES=$(ssh centos@dev1.otabeksobirov.com docker ps -aq) 
 							for i in \$IMAGES; do
-								ssh centos@${ENVIR} docker stop \$i
-								ssh centos@${ENVIR} docker rm \$i
+								ssh centos@dev1.otabeksobirov.com docker stop \$i
+								ssh centos@dev1.otabeksobirov.com docker rm \$i
 							done 
 							'''
 					} catch(e) {
@@ -122,7 +122,7 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 		timestamps {
 			ws {
 				sh '''
-					ssh centos@${ENVIR} docker run -dti -p 5001:5000 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis:${Version}
+					ssh centos@dev1.otabeksobirov.com docker run -dti -p 5001:5000 956863093364.dkr.ecr.us-east-1.amazonaws.com/artemis:${Version}
 					'''
 				}
 			}

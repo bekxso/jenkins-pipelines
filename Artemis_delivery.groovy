@@ -8,15 +8,15 @@ properties(
 
 [ 
 
-'version/0.1',  
+'0.1',  
 
-'version/0.2',  
+'0.2',  
 
-'version/0.3',  
+'0.3',  
 
-'version/0.4',  
+'0.4',  
 
-'version/0.5'],  
+'0.5'],  
 
 description: 'Which version of the app should I deploy? ',  
 
@@ -28,7 +28,7 @@ timestamps {
 
 ws { 
 
-checkout([$class: 'GitSCM', branches: [[name: '${Version}']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/fuchicorp/artemis.git']]])
+checkout([$class: 'GitSCM', branches: [[name: 'dev']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/farrukh90/artemis.git']]])
 } 
 
 } 
